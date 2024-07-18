@@ -1,6 +1,6 @@
 import pytest
 
-def test_create_new_gist(create_gist,payload, delete_gist):
+def test_create_new_gist(create_gist,payload):
     """
         test to create a new gest
     """
@@ -15,4 +15,3 @@ def test_create_new_gist(create_gist,payload, delete_gist):
     # to verify created gist content 
     print(f"created GIST ID = {created_gist_data['id']}")
     assert created_gist_data['files']['README.md']['content'] == payload['files']['README.md']['content']
-    delete_gist(created_gist_data['id'])
