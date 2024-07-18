@@ -9,6 +9,7 @@ import json
 from dotenv import load_dotenv, find_dotenv
 from dataclasses import dataclass, field
 from typing import Sequence, Mapping
+from functools import partial
 
 
 # constants
@@ -20,8 +21,6 @@ class Config():
     
     BASE_URL: str = "https://api.github.com/gists"
    
-##################
-
 @pytest.fixture(scope="session")
 def headers():
     """
@@ -60,14 +59,75 @@ def payload():
 
 
 @pytest.fixture(scope="session")
-def create_gist(payload, headers):
+def create_gist(payload, headers,test_config,delete_gist):
     """
     fixture to create a new gist
+    """    
+    def _create_gist():
+        response = requests.post(test_config.BASE_URL, headers=headers, data=json.dumps(payload)) # data=json.dumps(payload) Converts the Python dictionary payload into a JSON formatted string 
+        # data = response.json()
+        # created_gist_id = data["id"]
+    
+        return response
+    
+    return _create_gist
+
+    # print(f"deleted newly created gistid: {created_gist_id}")
+    
+    # #Teardown: Delete the gist after the test
+    # try:
+    #     print(f"deleted newly created gistid: {created_gist_id}")
+    #     delete_gist(created_gist_id)
+    #     print(f"deleted newly created gistid: {created_gist_id}")
+    # except Exception as e:
+    #     # Handle the exception if gist already deleted
+    #     print(f"gist already deleted of id {created_gist_id}: {e}")
+
+
+@pytest.fixture(scope="session")
+def delete_gist(headers,test_config):
+    """
+    fixture to delete a gist
+    """
+    def _delete_gist(gist_id, headers,test_config):
+        """
+        function to delete a gist
+        """
+
+        response = requests.delete(f"{test_config.BASE_URL}/{gist_id}", headers=headers) 
+        response.raise_for_status()
+        return response 
+
+    delete_gist_partial = partial(_delete_gist, headers=headers,test_config=test_config)
+    return delete_gist_partial
+    
+@pytest.fixture(scope="session")
+def retrieve_all_gists(headers,test_config):
+    """
+    fixture to retrive a gist 
     """
 
-    test_config = Config()
-    response = requests.post(test_config.BASE_URL, headers=headers, data=json.dumps(payload)) # data=json.dumps(payload) Converts the Python dictionary payload into a JSON formatted string 
-    return response 
+    def _retrieve_all_gists():
+        response = requests.get(test_config.BASE_URL, headers=headers) 
+        return response 
+    return _retrieve_all_gists
+
+@pytest.fixture(scope="session")
+def get_gist_by_id(headers,test_config):
+    """
+    fixture to get a gist by id
+    """
+    def _get_gist_by_id(gist_id, headers,test_config):
+        """
+        function to get a gist by id
+        """
+
+        response = requests.get(f"{test_config.BASE_URL}/{gist_id}", headers=headers) 
+        return response 
+
+    get_gist_by_id = partial(_get_gist_by_id, headers=headers,test_config=test_config)
+    return get_gist_by_id
+
 
 @pytest.fixture(scope="session")
 def test_config():
