@@ -37,7 +37,7 @@ def headers():
  
     return {
         'Content-Type': 'application/json',
-        'Authorization': f"Bearer {os.getenv('GITHUB_ACCESS_TOKEN')}" 
+        'Authorization': f"Bearer {os.getenv('GH_TOKEN')}" 
     }
 
 @pytest.fixture(scope="function")
