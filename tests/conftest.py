@@ -112,6 +112,22 @@ def retrieve_all_gists(headers,test_config):
     return _retrieve_all_gists
 
 @pytest.fixture(scope="function")
+def get_gist_since_date(headers,test_config):
+    """
+    fixture to get all gist since date
+    """
+    def _get_gist_since_date(date, headers,test_config):
+        """
+        function to get all gist since date
+        """
+
+        response = requests.get(f"{test_config.BASE_URL}?since={date}", headers=headers) 
+        return response 
+
+    get_gist_since_date = partial(_get_gist_since_date, headers=headers,test_config=test_config)
+    return get_gist_since_date
+
+@pytest.fixture(scope="function")
 def get_gist_by_id(headers,test_config):
     """
     fixture to get a gist by id
