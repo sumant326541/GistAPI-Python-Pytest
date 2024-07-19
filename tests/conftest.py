@@ -27,13 +27,13 @@ def headers():
        fixture to set authrization token and Content-Type to headers
     """
 
-    # To ensure that the .env file is found and loaded
-    dotenv_path = find_dotenv()
-    if not dotenv_path:
-        print("Error: .env file not found.")
-    else:
-        load_dotenv(dotenv_path)
-        print(f"Loaded .env file from: {dotenv_path}")
+    # # To ensure that the .env file is found and loaded
+    # dotenv_path = find_dotenv()
+    # if not dotenv_path:
+    #     print("Error: .env file not found.")
+    # else:
+    #     load_dotenv(dotenv_path)
+    #     print(f"Loaded .env file from: {dotenv_path}")
  
     return {
         'Content-Type': 'application/json',
